@@ -15,8 +15,9 @@ async function	eventListener() {
 }
 
 async function	accessAPI(querySearch) {
+	console.log("HOLO");
 	const	env = await getEnv();
-	const	url = `https://api.unsplash.com/search/photos?query=${querySearch}&per_page=10&client_id=${env.ACCESS_KEY}`;
+	const	url = `https://api.unsplash.com/search/photos?query=${querySearch}&per_page=10&client_id=${env.UNSPLASH_ACCESS_KEY}`;
 
 	fetch(url)
 	.then (response => {
@@ -43,6 +44,7 @@ async function	getEnv() {
 		if (!response.ok)
 			throw new Error(response.status);
 		const	data = await response.json();
+		console.log("EnVS:", data);
 		return data;
 	}
 	catch (error) {

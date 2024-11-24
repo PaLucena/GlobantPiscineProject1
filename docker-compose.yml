@@ -1,15 +1,50 @@
-version: "2"
 services:
-  node:
-    image: "node:8"
-    user: "node"
-    working_dir: /home/node/app
-    environment:
-      - NODE_ENV=production
+  frontend:
+    container_name: front
+    build:
+      context: ./frontend
     volumes:
-      - ./:/home/node/app
+      - front_volume:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+    networks:
+      - image_gallery_network
+    restart: always
+
+  backend:
+    container_name: back
+    build:
+      context: ./backend
+    volumes:
+      - back_volume:/app/src
     expose:
       - "5000"
-    ports: # use if it is necessary to expose the container to the host machine
-      - "5000:5000"
-    command: "npm start"
+    networks:
+      - image_gallery_network
+    restart: always
+
+volumes:
+  front_volume:
+    name: front_volume
+    driver: local
+    driver_opts:
+      type: none
+      device: ./frontend/src/app
+      o: bind
+
+  back_volume:
+    name : back_volume
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backend/src
+      o: bind
+
+networks:
+  image_gallery_network:
+    name: image_gallery_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
+          gateway: 172.23.0.1
